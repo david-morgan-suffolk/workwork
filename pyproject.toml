@@ -7,7 +7,9 @@ authors = [
     { name = "David Morgan", email = "dmorgan@suffolk.com" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "pytest>=8.3.5",
+]
 
 [project.scripts]
 workwork = "workwork:main"

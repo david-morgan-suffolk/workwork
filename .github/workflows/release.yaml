@@ -12,16 +12,13 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Enable caching
-        uses: astral-sh/setup-uv@v5
+      - uses: actions/checkout@v4
+
+      - name: Setup
+        uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-          
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-
+          python-version: 3.12
+            
       - name: Run Tests
         run: uv run pytest tests
