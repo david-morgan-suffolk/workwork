@@ -19,6 +19,7 @@ jobs:
         with:
           enable-cache: true
           python-version: 3.12
-            
+      - run: uv pip install --python=3.12 pip
+      
       - name: Run Tests
         run: uv run pytest
