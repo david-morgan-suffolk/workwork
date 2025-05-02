@@ -21,4 +21,4 @@ jobs:
           python-version: 3.12
             
       - name: Run Tests
-        run: uv run pytest tests
+        run: uv run pytest
