@@ -1,7 +1,7 @@
 [project]
 name = "workwork"
 version = "0.1.0"
-description = "Add your description here"
+description = "A test for packaging uv projects into tags for releases, along with CI/CD for testing and pre-commits."
 readme = "README.md"
 authors = [
     { name = "David Morgan", email = "dmorgan@suffolk.com" }

@@ -1,39 +1,31 @@
 
-on:
-  push:
-    tags:
-      - 'v*' # double check these settings
-
 name: Build and Publish
 
+on:
+  push:
+    branches:
+      - main
+    
 jobs:
   build:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
+      - name: Enable caching
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          
       - name: Checkout Code
         uses: actions/checkout@v4
+
       - name: Install uv
         uses: astral-sh/setup-uv@v5
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version-file: "pyproject.toml"
-      - name: Run tests
+
+      - name: Run Tests
         run: uv run pytest tests
-      
-      - name: Create Release
-        id: create_release
-        uses: comnoco/create-release@v2
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
-          draft: false
-          prerelease: false
-      
