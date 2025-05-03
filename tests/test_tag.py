@@ -1,5 +1,6 @@
 import pytest
 
+
 @pytest.fixture
 def test_value() -> int :
     return 1
