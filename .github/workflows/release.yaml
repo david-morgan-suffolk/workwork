@@ -27,6 +27,9 @@ jobs:
       - name: Installing Python  
         run: uv pip install --python=3.12 pip
       
+      - name: Clear cache
+        run: uv cache clean
+        
       - name: Run Tests
         run: uv run pytest
 
