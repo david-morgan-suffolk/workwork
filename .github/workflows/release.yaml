@@ -29,15 +29,15 @@ jobs:
       
       - name: Clear cache
         run: uv cache clean
-        
+
       - name: Run Tests
         run: uv run pytest
 
       - name: Build Release
         run: uv build
 
-      - name: Test Publish
-        run: uv publish --index testpypi --token ${{ secrets.TEST_PYPI_TOKEN }}
+      # - name: Test Publish
+      #   run: uv publish --index testpypi --token ${{ secrets.TEST_PYPI_TOKEN }}
       
       - name: Bump version and push tag
         id: tag_version
