@@ -8,10 +8,33 @@ permissions:
   contents: write
 
 jobs:
+  check-commit-job:
+    name: Check Commit
+    runs-on: ubuntu-latest
+    outputs:
+      is_conventional: ${{ steps.checking.outputs.is_conventional }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Check Commit Message
+        id: checking
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          if echo "$COMMIT_MSG" | grep -E "^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z-]+\))?: .+" > /dev/null; then
+            echo "is_conventional=true" >> $GITHUB_OUTPUT
+            echo "Commit follows Angular convention"
+          else
+            echo "is_conventional=false" >> $GITHUB_OUTPUT
+            echo "Commit does not follow Angular convention, skipping workflow"
+          fi
+
   build-job:
     name: Create Release
+    needs: check-commit-job
+    if: needs.check-commit-job.outputs.is_conventional =='true'
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -52,5 +75,5 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.tagging.outputs.new_tag }}
-          name: Release ${{ steps.tagging.outputs.new_tag }}
+          name: ${{ steps.tagging.outputs.new_tag }}
           body: ${{ steps.tagging.outputs.changelog }}
