@@ -11,8 +11,6 @@ jobs:
   build-job:
     name: Create Release
     runs-on: ubuntu-latest
-    outputs:
-        can_build: ${{steps.testing.outputs.pytest_result}}
 
     steps:
       - name: Checkout Code
@@ -39,7 +37,7 @@ jobs:
           echo "::testing name=pytest_result::true"
 
       - name: Build Project
-        if: steps.testing.outputs.can_build == 'true'
+        if: steps.testing.outcome == 'success'
         run: uv build
 
       - name: Bump Version
