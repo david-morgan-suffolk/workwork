@@ -8,10 +8,12 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  build-job:
     name: Create Release
     runs-on: ubuntu-latest
-    
+    outputs:
+        can_build: ${{steps.testing.outputs.pytest_result}}
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -23,34 +25,36 @@ jobs:
           activate-environment: true
           python-version: 3.12
           cache-dependency-glob: "uv.lock"
-          
-      - name: Installing Python  
+
+      - name: Installing Python
         run: uv pip install --python=3.12 pip
-      
+
       - name: Clear cache
         run: uv cache clean
 
       - name: Run Tests
-        run: uv run pytest
+        id: testing
+        run: |
+          uv run pytest
+          echo "::testing name=pytest_result::true"
 
-      - name: Build Release
+      - name: Build Project
+        if: steps.testing.outputs.can_build == 'true'
         run: uv build
 
-      # - name: Test Publish
-      #   run: uv publish --index testpypi --token ${{ secrets.TEST_PYPI_TOKEN }}
-      
-      - name: Bump version and push tag
-        id: tag_version
+      - name: Bump Version
+        id: tagging
         uses: mathieudutour/github-tag-action@v6.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           tag_prefix: workwork
           # Only bump with angular conventions
-          default_bump: false     
-      
-      - name: Create a GitHub release
+          default_bump: false
+
+      - name: Release Version
+        if: steps.tagging.outputs.new_tag != 'undefined'
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ steps.tag_version.outputs.new_tag }}
-          name: Release ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.tag_version.outputs.changelog }}
+          tag: ${{ steps.tagging.outputs.new_tag }}
+          name: Release ${{ steps.tagging.outputs.new_tag }}
+          body: ${{ steps.tagging.outputs.changelog }}
